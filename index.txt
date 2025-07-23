@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report: The AI & Blockchain Frontier</title>
+    <!-- Chosen Palette: Warm Neutrals (Slate, Zinc, Stone) with a Teal accent -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar for smooth scrolling between thematic sections. The structure is designed for non-linear exploration, starting with a high-level overview (Hero, Market Growth), then allowing users to dive into a layered 'Ecosystem' view (using tabs for Hardware, Infrastructure, etc.), explore specific 'Industry Applications' via an interactive selector, and finally review 'Challenges & Opportunities'. A new 'Startups' section has been added to highlight emerging players. This architecture breaks down the dense report into digestible, interactive modules, prioritizing user engagement and understanding over the original linear format. The flow encourages discovery, moving from macro trends to micro examples. -->
+    <!-- Visualization & Content Choices: 
+        - Market Growth: Goal: Compare forecasts. Viz: Interactive line chart (Chart.js) with buttons to toggle datasets. Justification: Allows direct comparison of growth projections, making the data more impactful than a static table.
+        - Ecosystem: Goal: Organize many companies. Viz: Tabbed interface with clickable cards. Justification: Prevents information overload from large tables. Clicking to reveal details creates a clean, user-driven exploration path.
+        - Industry Applications: Goal: Explore sector-specific transformations. Viz: Icon-based grid that dynamically updates a content area. Interaction: This is the core interactive element, allowing users to focus on one industry at a time, see key benefits, and browse relevant companies. Justification: Transforms a long list of sections into a focused, engaging discovery tool.
+        - Company Details Modal: Goal: Provide in-depth company information. Viz: Dynamic text display with clickable links for website, stock info, CEO bio. Justification: Centralizes detailed company data, enhancing user research capabilities without cluttering the main view.
+        - Startups Section: Goal: Highlight new opportunities. Viz: Dynamic list with links to startup webpages. Justification: Provides a dedicated space for this important segment, making it easily discoverable and actionable.
+        - General: All diagrams are built with HTML/CSS and Unicode icons to adhere to constraints. Text is condensed for scannability.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #27272a; /* zinc-800 */
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #14b8a6; /* teal-500 */
+            border-bottom-color: #14b8a6; /* teal-500 */
+        }
+        .section-title {
+            color: #18181b; /* zinc-900 */
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background-color: #14b8a6; /* teal-500 */
+            color: #ffffff;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#hero" class="text-2xl font-bold text-zinc-800">AI ⊗ Blockchain</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#market" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-zinc-600">Market</a>
+                        <a href="#ecosystem" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-zinc-600">Ecosystem</a>
+                        <a href="#applications" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-zinc-600">Applications</a>
+                        <a href="#startups" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-zinc-600">Startups</a>
+                        <a href="#outlook" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-zinc-600">Outlook</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-zinc-900">The Converging Frontier</h1>
+                <p class="mt-6 text-lg md:text-xl leading-8 text-zinc-600 max-w-3xl mx-auto">Exploring the high-growth industries and companies fueling the synergistic advancements of Artificial Intelligence and Blockchain technology.</p>
+                <div class="mt-10 flex items-center justify-center gap-x-6">
+                    <a href="#market" class="rounded-md bg-teal-500 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600">Explore the Data</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="market" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="section-title text-3xl font-bold tracking-tight sm:text-4xl">A Market Poised for Explosive Growth</h2>
+                    <p class="mt-4 text-lg text-zinc-600 max-w-2xl mx-auto">Multiple analyses project a significant expansion of the global Blockchain AI market, driven by increasing recognition of the powerful synergy between these two transformative technologies.</p>
+                </div>
+                <div class="mt-12">
+                    <div class="chart-container">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                    <div id="market-chart-controls" class="mt-6 flex justify-center items-center gap-2 flex-wrap">
+                        <p class="text-sm font-medium text-zinc-700 mr-2">Compare Forecasts:</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ecosystem" class="py-16 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="section-title text-3xl font-bold tracking-tight sm:text-4xl">The Powerhouse Ecosystem</h2>
+                    <p class="mt-4 text-lg text-zinc-600 max-w-3xl mx-auto">A complex network of technologies and services provides the foundation for AI and Blockchain innovation. Explore the key layers, from the silicon that powers AI to the security firms that protect decentralized assets.</p>
+                </div>
+                <div class="mt-12">
+                    <div class="mb-8 border-b border-slate-200">
+                        <nav id="ecosystem-tabs" class="-mb-px flex flex-wrap justify-center gap-x-2 sm:gap-x-6" aria-label="Tabs">
+                        </nav>
+                    </div>
+                    <div id="ecosystem-content">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="applications" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="section-title text-3xl font-bold tracking-tight sm:text-4xl">Transformative Industry Applications</h2>
+                    <p class="mt-4 text-lg text-zinc-600 max-w-3xl mx-auto">The convergence of AI and Blockchain is not theoretical; it's actively reshaping major industries. Select an industry below to see how this synergy is creating value, from revolutionizing finance to securing global supply chains.</p>
+                </div>
+                <div id="app-selector" class="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                </div>
+                <div id="app-content-area" class="mt-12 p-8 rounded-2xl bg-white shadow-lg border border-slate-200 min-h-[400px]">
+                </div>
+            </div>
+        </section>
+
+        <section id="startups" class="py-16 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="section-title text-3xl font-bold tracking-tight sm:text-4xl">The Startup Landscape: Fueling Future Growth</h2>
+                    <p class="mt-4 text-lg text-zinc-600 max-w-3xl mx-auto">The dynamic interplay of AI and blockchain creates fertile ground for innovative startups. These agile companies are often at the forefront of combining these technologies to solve niche problems and disrupt established industries.</p>
+                </div>
+                <div id="startup-content" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Startup content will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="outlook" class="py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="section-title text-3xl font-bold tracking-tight sm:text-4xl">Challenges & Strategic Opportunities</h2>
+                    <p class="mt-4 text-lg text-zinc-600 max-w-3xl mx-auto">The path to widespread adoption is not without obstacles. However, overcoming these challenges presents immense opportunities for innovation and value creation.</p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="challenges-content" class="p-6 rounded-xl border border-rose-200 bg-rose-50/50"></div>
+                    <div id="opportunities-content" class="p-6 rounded-xl border border-teal-200 bg-teal-50/50"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-zinc-800 text-white">
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-zinc-400">Interactive report generated from source material on AI & Blockchain Growth Sectors.</p>
+        </div>
+    </footer>
+    
+    <div id="company-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl transform scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 id="modal-title" class="text-2xl font-bold text-zinc-900"></h3>
+                        <p id="modal-category" class="text-sm font-medium text-teal-600 mt-1"></p>
+                    </div>
+                    <button id="modal-close-btn" class="text-zinc-400 hover:text-zinc-600 transition">&times;</button>
+                </div>
+                <div id="modal-body" class="mt-4 text-zinc-600 space-y-4"></div>
+                <div id="modal-links" class="mt-6 border-t border-slate-200 pt-4 space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Helper function to HTML-encode a string for safe attribute embedding
+    function htmlEncode(str) {
+        return str.replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#39;'); // Escape single quote
+    }
+
+    const appData = {
+        marketForecasts: {
+            'Precedence Research': {
+                years: [2024, 2025, 2034],
+                values: [550.70, 680.89, 4338.66],
+                cagr: 22.93,
+                color: 'rgba(20, 184, 166, 0.8)', // teal-500
+                borderColor: 'rgb(13, 148, 136)' // teal-600
+            },
+            'ResearchAndMarkets': {
+                years: [2024, 2025, 2030],
+                values: [808.13, 1120, 5380],
+                cagr: 37.18,
+                color: 'rgba(99, 102, 241, 0.8)', // indigo-500
+                borderColor: 'rgb(79, 70, 229)' // indigo-600
+            },
+            'MRFR Analysis': {
+                years: [2024, 2025, 2035],
+                values: [3320, 4280, 70000],
+                cagr: 28.93,
+                color: 'rgba(234, 179, 8, 0.8)', // yellow-500
+                borderColor: 'rgb(202, 138, 4)' // yellow-600
+            }
+        },
+        ecosystem: {
+            'AI Hardware': {
+                icon: '⚙️',
+                description: 'The specialized silicon that powers AI, from massive data center chips to efficient edge processors.',
+                companies: [
+                    { name: "NVIDIA", category: "Leading Producer", focus: "Revenue & volume leader, general-purpose AI, expanding US manufacturing.", chip: "Blackwell Ultra", website: "https://www.nvidia.com/", stockSymbol: "NVDA", headquarters: "Santa Clara, CA", ceo: { name: "Jensen Huang", bioLink: "https://www.nvidia.com/en-us/about-nvidia/leadership/jensen-huang/" } },
+                    { name: "AMD", category: "Leading Producer", focus: "Rapidly gaining ground in AI inference.", chip: "MI400", website: "https://www.amd.com/", stockSymbol: "AMD", headquarters: "Santa Clara, CA", ceo: { name: "Lisa Su", bioLink: "https://www.amd.com/en/corporate/executive-team/lisa-su.html" } },
+                    { name: "Intel", category: "Leading Producer", focus: "Catching up in GPUs for AI.", chip: "Gaudi 3", website: "https://www.intel.com/", stockSymbol: "INTC", headquarters: "Santa Clara, CA", ceo: { name: "Pat Gelsinger", bioLink: "https://www.intel.com/content/www/us/en/company/our-company/leadership/pat-gelsinger.html" } },
+                    { name: "AWS", category: "Cloud & Chip Producer", focus: "Custom AI silicon for cloud services.", chip: "Trainium, Inferentia", website: "https://aws.amazon.com/", stockSymbol: "AMZN", headquarters: "Seattle, WA", ceo: { name: "Adam Selipsky", bioLink: "https://aws.amazon.com/executive-team/adam-selipsky/" } },
+                    { name: "Google", category: "Cloud & Chip Producer", focus: "Internal use and cloud services.", chip: "TPUs (Ironwood, Trillium)", website: "https://cloud.google.com/", stockSymbol: "GOOGL", headquarters: "Mountain View, CA", ceo: { name: "Sundar Pichai", bioLink: "https://about.google/our-story/leadership/sundar-pichai/" } },
+                    { name: "Microsoft Azure", category: "Cloud & Chip Producer", focus: "Cloud-based AI training & inference.", chip: "Maia", website: "https://azure.microsoft.com/", stockSymbol: "MSFT", headquarters: "Redmond, WA", ceo: { name: "Satya Nadella", bioLink: "https://news.microsoft.com/exec/satya-nadella/" } },
+                    { name: "Apple", category: "Edge AI Producer", focus: "AI at the edge (iPhones, iPads, Macs).", chip: "Neural Engine (M-series)", website: "https://www.apple.com/", stockSymbol: "AAPL", headquarters: "Cupertino, CA", ceo: { name: "Tim Cook", bioLink: "https://www.apple.com/leadership/tim-cook/" } },
+                    { name: "Qualcomm", category: "Edge AI Producer", focus: "AI at the edge (smartphones, automotive).", chip: "Hexagon, Snapdragon", website: "https://www.qualcomm.com/", stockSymbol: "QCOM", headquarters: "San Diego, CA", ceo: { name: "Cristiano Amon", bioLink: "https://www.qualcomm.com/company/leadership/cristiano-amon" } },
+                    { name: "Tesla", category: "Specialized Producer", focus: "Autonomous vehicle development, AI training supercomputer.", chip: "FSD chips, Dojo", website: "https://www.tesla.com/", stockSymbol: "TSLA", headquarters: "Austin, TX", ceo: { name: "Elon Musk", bioLink: "https://en.wikipedia.org/wiki/Elon_Musk" } },
+                    { name: "Groq", category: "Specialized AI Chipmaker", focus: "Fast LLM inference, ultra-low latency.", chip: "N/A", website: "https://groq.com/", headquarters: "Mountain View, CA", ceo: { name: "Jonathan Ross", bioLink: "https://www.groq.com/leadership/" } },
+                    { name: "Cerebras Systems", category: "Specialized AI Chipmaker", focus: "Massive AI model training, wafer-scale chips.", chip: "Wafer-Scale Engine (WSE-3)", website: "https://cerebras.net/", headquarters: "Sunnyvale, CA", ceo: { name: "Andrew Feldman", bioLink: "https://www.cerebras.net/about/leadership/" } },
+                ]
+            },
+            'Decentralized Infra': {
+                icon: '🌐',
+                description: 'Peer-to-peer networks for compute and storage, offering alternatives to centralized cloud providers with a focus on cost, privacy, and censorship-resistance.',
+                companies: [
+                    { name: "Akash Network", service: "Decentralized Cloud Compute", features: "Up to 90% cost savings vs. traditional cloud, enhanced security, cross-chain compatibility.", token: "AKT", website: "https://akash.network/", headquarters: "San Francisco, CA", ceo: { name: "Greg Osuri", bioLink: "https://www.akash.network/team" } },
+                    { name: "Render Network", service: "Distributed GPU Rendering", features: "Monetizes idle GPUs for graphics rendering and AI model training.", token: "RNDR", website: "https://render.network/", headquarters: "Los Angeles, CA", ceo: { name: "Jules Urbach", bioLink: "https://render.network/team" } },
+                    { name: "Storj", service: "Decentralized Cloud Storage", features: "S3-compatible, up to 80% cost savings, 83% carbon emission reduction.", token: "STORJ", website: "https://www.storj.io/", headquarters: "Atlanta, GA", ceo: { name: "Ben Golub", bioLink: "https://www.storj.io/team" } },
+                    { name: "Arweave", service: "Permanent Data Storage", features: "Permanent and decentralized web for data, cryptographically verifiable archive.", token: "AR", website: "https://www.arweave.org/", headquarters: "London, UK", ceo: { name: "Sam Williams", bioLink: "https://www.arweave.org/team" } },
+                    { name: "Sia", service: "Decentralized Cloud Storage", features: "Monetizes unused hard drive space, enhanced privacy and encryption.", token: "SC", website: "https://sia.tech/", headquarters: "Boston, MA", ceo: { name: "David Vorick", bioLink: "https://sia.tech/about" } },
+                    { name: "Filecoin", service: "Decentralized Storage", features: "Incentivizes storage providers, part of Protocol Labs ecosystem.", token: "FIL", website: "https://filecoin.io/", headquarters: "Palo Alto, CA", ceo: { name: "Juan Benet", bioLink: "https://protocol.ai/team/" } },
+                ]
+            },
+            'Blockchain Platforms': {
+                icon: '🔗',
+                description: 'The foundational Layer 1 and Layer 2 networks that enable decentralized applications and smart contracts.',
+                companies: [
+                    { name: "Ethereum", type: "Layer 1", strengths: "Dominates smart contracts, DeFi, NFTs; reduced energy consumption via PoS.", website: "https://ethereum.org/", headquarters: "Zug, Switzerland (Ethereum Foundation)", ceo: { name: "Vitalik Buterin (Co-founder)", bioLink: "https://vitalik.ca/general/2021/03/23/biography.html" } },
+                    { name: "Solana", type: "Layer 1", strengths: "High throughput (65,000 TPS), low transaction costs, optimized for low-latency AI.", website: "https://solana.com/", headquarters: "San Francisco, CA", ceo: { name: "Anatoly Yakovenko (Co-founder)", bioLink: "https://solana.com/news/anatoly-yakovenko-bio" } },
+                    { name: "Polkadot", type: "Layer 1", strengths: "Cross-chain interoperability via parachains, strong community.", website: "https://polkadot.network/", headquarters: "Zug, Switzerland (Web3 Foundation)", ceo: { name: "Gavin Wood (Co-founder)", bioLink: "https://gavwood.com/bio.html" } },
+                    { name: "Cosmos", type: "Layer 1", strengths: "Interchain standard for building application-specific blockchains (appchains).", website: "https://cosmos.network/", headquarters: "Zug, Switzerland (Interchain Foundation)", ceo: { name: "Ethan Buchman (Co-founder)", bioLink: "https://interchain.io/team" } },
+                    { name: "Arbitrum", type: "Layer 2", strengths: "Optimistic Rollup with high throughput, low costs, inherits Ethereum security.", website: "https://arbitrum.io/", headquarters: "New York, NY (Offchain Labs)", ceo: { name: "Steven Goldfeder", bioLink: "https://offchainlabs.com/team" } },
+                    { name: "Base", type: "Layer 2", strengths: "Low transaction costs, enhanced security, EVM compatibility, backed by Coinbase.", website: "https://base.org/", headquarters: "San Francisco, CA (Coinbase)", ceo: { name: "Brian Armstrong (Coinbase CEO)", bioLink: "https://www.coinbase.com/about/leadership" } },
+                ]
+            },
+            'MLOps & Tools': {
+                icon: '🛠️',
+                description: 'The critical tools and platforms for managing the end-to-end lifecycle of machine learning models, from experiment tracking to production monitoring.',
+                companies: [
+                    { name: "Weights & Biases", func: "Experiment Tracking", features: "Track, compare, and visualize ML experiments. Acquired by CoreWeave.", website: "https://wandb.ai/", headquarters: "San Francisco, CA", ceo: { name: "Lukas Biewald", bioLink: "https://wandb.ai/site/company" } },
+                    { name: "Hugging Face", func: "Model Serving & Deployment", features: "Leading platform for sharing and deploying ML models, especially LLMs.", website: "https://huggingface.co/", headquarters: "New York, NY", ceo: { name: "Clément Delangue", bioLink: "https://huggingface.co/company" } },
+                    { name: "Comet", func: "Experiment Tracking", features: "Track, compare, explain, and reproduce models for enterprise teams.", website: "https://www.comet.com/", headquarters: "New York, NY", ceo: { name: "Gideon Mendels", bioLink: "https://www.comet.com/company" } },
+                    { name: "BentoML", func: "Model Serving", features: "Open-source framework for high-throughput, optimized model serving.", website: "https://bentoml.com/", headquarters: "San Francisco, CA", ceo: { name: "Chaoyu Yang", bioLink: "https://bentoml.com/company" } },
+                    { name: "Fiddler", func: "Model Monitoring", features: "ML Performance Monitoring Platform powered by Explainable AI.", website: "https://www.fiddler.ai/", headquarters: "Mountain View, CA", ceo: { name: "Krishna Gade", bioLink: "https://www.fiddler.ai/about" } },
+                    { name: "TruEra", func: "Model Monitoring", features: "Analyze and explain predictions to improve model governance. Acquired by Snowflake.", website: "https://truera.com/", headquarters: "Redwood City, CA", ceo: { name: "Shayak Sen", bioLink: "https://truera.com/about-us/" } },
+                ]
+            },
+            'Security & Auditing': {
+                icon: '🛡️',
+                description: 'Firms specializing in securing blockchain applications through smart contract audits, formal verification, and AI-driven threat detection.',
+                companies: [
+                    { name: "Hacken", spec: "Smart Contract Audits", approach: "White hat hacker community, DualDefense competitions, unlimited in-scope fixes.", website: "https://hacken.io/", headquarters: "Kyiv, Ukraine", ceo: { name: "Dyma Budorin", bioLink: "https://hacken.io/team/" } },
+                    { name: "Quantstamp", spec: "Smart Contract Audits", approach: "Widely recognized and respected in the blockchain security sector.", website: "https://quantstamp.com/", headquarters: "San Francisco, CA", ceo: { name: "Richard Ma", bioLink: "https://quantstamp.com/team" } },
+                    { name: "OpenZeppelin", spec: "Security & Libraries", approach: "Provides open-source libraries and Defender platform for secure operations.", website: "https://openzeppelin.com/", headquarters: "Buenos Aires, Argentina", ceo: { name: "Manuel Araoz", bioLink: "https://openzeppelin.com/about/" } },
+                    { name: "Dowsers", spec: "Formal Verification & AI", approach: "Combines formal verification, cybersecurity, and AI to prevent vulnerabilities.", website: "https://dowsers.io/", headquarters: "San Francisco, CA", ceo: { name: "Dr. Grigore Rosu", bioLink: "https://dowsers.io/team" } },
+                ]
+            },
+        },
+        applications: {
+            'DeFi': {
+                icon: '💰',
+                title: 'Decentralized Finance (DeFi)',
+                summary: 'DeFi is being revolutionized by AI, which automates complex trading, optimizes yield farming, and enhances security. This makes the world of open, permissionless finance more accessible, efficient, and secure for a broader audience.',
+                benefits: [
+                    { name: 'Automated Trading', desc: 'AI agents analyze markets and reallocate assets to optimize yields.' },
+                    { name: 'Risk Management', desc: 'AI monitors for fraud and optimizes transaction routing.' },
+                    { name: 'Smarter Contracts', desc: 'AI helps optimize smart contracts for efficiency and security.' },
+                ],
+                companies: [
+                    { name: "Uniswap", role: "Decentralized Exchange", desc: "Automated Market Making (AMM) model for high liquidity.", website: "https://uniswap.org/", headquarters: "New York, NY", ceo: { name: "Hayden Adams", bioLink: "https://uniswap.org/team" } },
+                    { name: "Aave", role: "Lending & Borrowing", desc: "Pioneered flash loans and features dynamic interest rates.", website: "https://aave.com/", headquarters: "London, UK", ceo: { name: "Stani Kulechov", bioLink: "https://aave.com/team" } },
+                    { name: "SingularityDAO", role: "AI Portfolio Management", desc: "Uses AI for smart investments and auto-adjusting portfolios.", website: "https://singularitydao.ai/", headquarters: "Singapore", ceo: { name: "Marcello Mari", bioLink: "https://singularitydao.ai/team" } },
+                    { name: "OpenPad", role: "AI-Enabled Launchpad", desc: "AI-driven personal agent for managing Web3 investments.", website: "https://openpad.ai/", headquarters: "Singapore", ceo: { name: "David Chen", bioLink: "https://openpad.ai/team" } },
+                ]
+            },
+            'Supply Chain': {
+                icon: '🚚',
+                title: 'Supply Chain & Logistics',
+                summary: 'The convergence of AI and blockchain is solving long-standing issues of opacity and inefficiency in logistics. Blockchain provides an immutable record for traceability, while AI optimizes everything from routing to demand forecasting.',
+                benefits: [
+                    { name: 'Total Transparency', desc: 'Blockchain creates a tamper-proof record of goods from origin to destination.' },
+                    { name: 'Predictive Logistics', desc: 'AI forecasts demand, optimizes inventory, and predicts disruptions.' },
+                    { name: 'Automated Workflows', desc: 'Smart contracts automate payments, customs, and compliance checks.' },
+                ],
+                companies: [
+                    { name: "IBM", role: "Enterprise Solutions", desc: "Offers IBM Food Trust (blockchain) and Supply Chain Intelligence Suite (AI).", website: "https://www.ibm.com/", stockSymbol: "IBM", headquarters: "Armonk, NY", ceo: { name: "Arvind Krishna", bioLink: "https://www.ibm.com/ibm/leadership/arvind-krishna/" } },
+                    { name: "Nestlé", role: "Food & Beverage", desc: "Uses IBM Food Trust for farm-to-factory traceability of ingredients.", website: "https://www.nestle.com/", stockSymbol: "NSRGY", headquarters: "Vevey, Switzerland", ceo: { name: "Mark Schneider", bioLink: "https://www.nestle.com/aboutus/management/executiveboard/mark-schneider" } },
+                    { name: "Morpheus.Network", role: "Global Supply Chain Platform", desc: "Middleware integrating blockchain for visibility and security, automating workflows.", website: "https://morpheus.network/", headquarters: "Toronto, Canada", ceo: { name: "Dan Weinberger", bioLink: "https://morpheus.network/team" } },
+                    { name: "Chronicled", role: "Pharma Supply Chain", desc: "Runs the Mediledger Project to combat counterfeit drugs and ensure authenticity.", website: "https://chronicled.com/", headquarters: "San Francisco, CA", ceo: { name: "Ryan Orr", bioLink: "https://chronicled.com/team" } },
+                ]
+            },
+            'Healthcare': {
+                icon: '⚕️',
+                title: 'Healthcare',
+                summary: 'In healthcare, this synergy addresses critical challenges in data security, privacy, and diagnostics. Blockchain secures patient records, while AI accelerates drug discovery and enables personalized medicine.',
+                benefits: [
+                    { name: 'Secure Health Records', desc: 'Blockchain provides a tamper-proof, patient-controlled ledger for EHRs.' },
+                    { name: 'AI-Powered Diagnostics', desc: 'AI algorithms analyze medical images and genomic data for earlier, more accurate diagnoses.' },
+                    { name: 'Faster Drug Discovery', desc: 'AI accelerates research while blockchain ensures clinical trial data integrity.' },
+                ],
+                companies: [
+                    { name: "BurstIQ", role: "Patient Data Management", desc: "Platform for secure management of massive patient data, maintaining HIPAA compliance.", website: "https://burstiq.com/", headquarters: "Denver, CO", ceo: { name: "Frank Ricotta", bioLink: "https://burstiq.com/about/" } },
+                    { name: "Medicalchain", role: "Electronic Health Records", desc: "Maintains the integrity of health records, creating a single point of truth for patient info.", website: "https://medicalchain.com/", headquarters: "London, UK", ceo: { name: "Dr. Abdullah Albeyatti", bioLink: "https://medicalchain.com/en/team/" } },
+                    { name: "Tempus", role: "Personalized Medicine", desc: "Uses AI to analyze genomics for personalized cancer treatments.", website: "https://tempus.com/", headquarters: "Chicago, IL", ceo: { name: "Eric Lefkofsky", bioLink: "https://tempus.com/about/" } },
+                    { name: "Embleema", role: "Clinical Trials & Research", desc: "Leverages blockchain for secure, untampered medical data collection to fast-track drug development.", website: "https://embleema.com/", headquarters: "New York, NY", ceo: { name: "Alexis Normand", bioLink: "https://embleema.com/about-us/" } },
+                ]
+            },
+            'Autonomous Systems': {
+                icon: '🤖',
+                title: 'Autonomous Systems',
+                summary: 'The "age of autonomy" is dawning, powered by AI for intelligence and blockchain for trust. From self-driving trucks to defense drones, these systems rely on AI for decision-making and blockchain for secure, transparent operations.',
+                benefits: [
+                    { name: 'Intelligent Vehicles', desc: 'AI powers self-driving software while blockchain can handle machine-to-machine payments.' },
+                    { name: 'Secure Robotics', desc: 'Blockchain can provide verifiable identities for robots to execute smart contracts.' },
+                    { name: 'Resilient Smart Cities', desc: 'AI optimizes urban services while blockchain secures device networks and governance.' },
+                ],
+                companies: [
+                    { name: "Tesla", role: "Autonomous Vehicles & Robotics", desc: "Developing FSD chips, Dojo AI supercomputer, and Optimus humanoid robot.", website: "https://www.tesla.com/", stockSymbol: "TSLA", headquarters: "Austin, TX", ceo: { name: "Elon Musk", bioLink: "https://en.wikipedia.org/wiki/Elon_Musk" } },
+                    { name: "Kodiak Robotics", role: "Autonomous Trucking", desc: "AI-powered ground autonomy solution for the driverless movement of freight.", website: "https://kodiak.ai/", headquarters: "Mountain View, CA", ceo: { name: "Don Burnette", bioLink: "https://kodiak.ai/team" } },
+                    { name: "Anduril", role: "Defense & Autonomous Systems", desc: "AI-powered operating system (Lattice) for autonomous defense missions.", website: "https://www.anduril.com/", headquarters: "Costa Mesa, CA", ceo: { name: "Palmer Luckey", bioLink: "https://www.anduril.com/about/team" } },
+                    { name: "NVIDIA", role: "Enabling Tech", desc: "Provides foundation models (Isaac GR00T) and tools for robotics and smart cars.", website: "https://www.nvidia.com/", stockSymbol: "NVDA", headquarters: "Santa Clara, CA", ceo: { name: "Jensen Huang", bioLink: "https://www.nvidia.com/en-us/about-nvidia/leadership/jensen-huang/" } },
+                ]
+            },
+            'Gaming & Metaverse': {
+                icon: '🎮',
+                title: 'Gaming & Metaverse',
+                summary: 'Gaming is shifting from centralized platforms to player-centric economies. Blockchain enables true digital ownership of in-game assets (NFTs), while AI creates more immersive and dynamic virtual worlds.',
+                benefits: [
+                    { name: 'True Digital Ownership', desc: 'NFTs give players verifiable ownership of their in-game items.' },
+                    { name: 'Play-to-Earn Models', desc: 'Players can earn real-world value through in-game activities.' },
+                    { name: 'Immersive Worlds', desc: 'AI is used to generate realistic 3D environments and intelligent NPC interactions.' },
+                ],
+                companies: [
+                    { name: "Blockchain App Factory", role: "Metaverse Game Development", desc: "Fuses AR, VR, AI, and blockchain to create immersive gaming experiences.", website: "https://blockchainappfactory.com/", headquarters: "Chennai, India", ceo: { name: "Saravanan V", bioLink: "https://blockchainappfactory.com/about-us" } },
+                ]
+            },
+            'Decentralized ID': {
+                icon: '🆔',
+                title: 'Decentralized Identity (DID)',
+                summary: 'DID shifts control of personal data from central authorities to individual users. This is becoming a foundational trust layer not just for people, but for the coming wave of autonomous AI agents.',
+                benefits: [
+                    { name: 'User Control & Privacy', desc: 'Individuals gain full ownership and granular control over their personal data.' },
+                    { name: 'Identity for AI', desc: 'Verifiable identities are crucial for autonomous AI agents to interact securely.' },
+                    { name: 'Frictionless Onboarding', desc: 'Reusable, verifiable credentials streamline user experiences across services.' },
+                ],
+                companies: [
+                    { name: "Indicio", role: "Identity Solutions", desc: "Launched ProvenAI, an identity solution specifically designed for AI agents.", website: "https://indicio.tech/", headquarters: "Washington, D.C.", ceo: { name: "Heather Dahl", bioLink: "https://indicio.tech/about-us/" } },
+                    { name: "Dock", role: "DID Platform", desc: "Provides tools for issuing and verifying verifiable credentials.", website: "https://www.dock.io/", headquarters: "London, UK", ceo: { name: "Nick Johnson", bioLink: "https://www.dock.io/team" } },
+                ]
+            }
+        },
+        startups: {
+            'Decentralized AI Agents': {
+                description: 'Startups building autonomous AI agents that operate on blockchain networks, requiring verifiable identities and secure, transparent interactions.',
+                examples: [
+                    { name: 'Fetch.ai', website: 'https://fetch.ai/', desc: 'Decentralized machine learning network.' },
+                    { name: 'Ocean Protocol', website: 'https://oceanprotocol.com/', desc: 'Decentralized data exchange for AI.' },
+                    { name: 'SingularityNET', website: 'https://singularitynet.io/', desc: 'Decentralized AI marketplace.' }
+                ]
+            },
+            'AI-Enhanced Web3 Security': {
+                description: 'New companies focusing on leveraging AI for advanced threat detection, vulnerability analysis, and real-time monitoring of blockchain protocols and smart contracts.',
+                examples: [
+                    { name: 'CertiK', website: 'https://www.certik.com/', desc: 'AI-powered blockchain security and auditing.' },
+                    { name: 'BlockSec', website: 'https://blocksec.com/', desc: 'Blockchain security company providing auditing and monitoring.' },
+                    { name: 'Forta', website: 'https://forta.org/', desc: 'Decentralized runtime security for Web3.' }
+                ]
+            },
+            'Real-World Asset Tokenization': {
+                description: 'Startups creating platforms that use blockchain to tokenize illiquid real-world assets (e.g., real estate, art) and AI for valuation, fractional ownership, and market analysis.',
+                examples: [
+                    { name: 'Centrifuge', website: 'https://centrifuge.io/', desc: 'Decentralized asset financing protocol.' },
+                    { name: 'Polymath', website: 'https://polymath.network/', desc: 'Platform for creating and managing security tokens.' },
+                    { name: 'Securitize', website: 'https://securitize.io/', desc: 'Digital asset securities platform.' }
+                ]
+            },
+            'Decentralized MLOps & Data': {
+                description: 'Companies building decentralized infrastructure for machine learning operations, including data labeling, model training, and data versioning on blockchain.',
+                examples: [
+                    { name: 'Giga ML', website: 'https://gigaml.com/', desc: 'Decentralized ML model training.' },
+                    { name: 'PowerLoom Protocol', website: 'https://powerloom.network/', desc: 'Decentralized data protocol for Web3.' },
+                    { name: 'DataUnion Foundation', website: 'https://dataunion.io/', desc: 'Decentralized data collective.' }
+                ]
+            },
+            'AI for Decentralized Governance': {
+                description: 'Startups exploring how AI can enhance the efficiency and fairness of decentralized autonomous organizations (DAOs) and other blockchain-based governance models.',
+                examples: [
+                    { name: 'Aragon', website: 'https://aragon.org/', desc: 'DAO creation and management platform.' },
+                    { name: 'Snapshot', website: 'https://snapshot.org/', desc: 'Off-chain decentralized governance.' },
+                    { name: 'Colony', website: 'https://colony.io/', desc: 'Framework for creating decentralized organizations.' }
+                ]
+            },
+            'AI-Powered Metaverse Experiences': {
+                description: 'Companies developing AI-driven content generation, intelligent NPCs, and dynamic environments within blockchain-based metaverse platforms.',
+                examples: [
+                    { name: 'The Sandbox', website: 'https://www.sandbox.game/', desc: 'Decentralized virtual world with NFTs.' },
+                    { name: 'Decentraland', website: 'https://decentraland.org/', desc: 'Decentralized virtual reality platform.' },
+                    { name: 'Inworld AI', website: 'https://www.inworld.ai/', desc: 'AI-powered characters for virtual worlds.' }
+                ]
+            }
+        },
+        outlook: {
+            challenges: [
+                { name: 'Scalability', desc: 'Public blockchains can struggle with the high transaction throughput needed for real-time AI.' },
+                { name: 'Regulatory Uncertainty', desc: 'Evolving legal landscapes for both AI and crypto create an unpredictable environment.' },
+                { name: 'Interoperability', desc: 'Seamless communication between different blockchain networks and legacy systems remains a hurdle.' },
+                { name: 'Complexity & Cost', desc: 'Developing and maintaining decentralized systems can require specialized expertise and higher initial costs.' },
+                { name: 'AI "Black Box"', desc: 'The opaque nature of some AI models raises trust and regulatory concerns.' },
+            ],
+            opportunities: [
+                { name: 'Agentic AI', desc: 'The rise of autonomous AI agents will require robust decentralized identity (DID) solutions to ensure trust and accountability.' },
+                { name: 'Hyper-automation', desc: 'AI-driven MLOps will enable unprecedented levels of automation, including self-retraining models.' },
+                { name: 'Real-World Asset (RWA) Tokenization', desc: 'Tokenizing assets like real estate on-chain, with AI for valuation, will unlock massive new markets.' },
+                { name: 'Living Intelligence', desc: 'The convergence of AI with sensors and biotech is creating systems that can sense, learn, and adapt beyond their initial programming.' },
+                { name: 'Decentralized AI Marketplaces', desc: 'Platforms like SingularityNET will democratize access to AI services, fostering a more equitable ecosystem.' },
+            ]
+        }
+    };
+
+    let marketChart;
+
+    function createMarketChart() {
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        marketChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 2 }).format(context.parsed.y * 1000000);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Market Size (USD)'
+                        },
+                        ticks: {
+                           callback: function(value, index, ticks) {
+                               return new Intl.NumberFormat('en-US', { notation: 'compact', compactDisplay: 'short' }).format(value * 1000000);
+                           }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    }
+                }
+            }
+        });
+        setupMarketChartControls();
+        updateMarketChart(Object.keys(appData.marketForecasts));
+    }
+
+    function setupMarketChartControls() {
+        const controlsContainer = document.getElementById('market-chart-controls');
+        Object.keys(appData.marketForecasts).forEach(key => {
+            const button = document.createElement('button');
+            button.textContent = key;
+            button.dataset.key = key;
+            button.className = 'tab-btn px-3 py-1.5 text-xs font-medium rounded-full border';
+            controlsContainer.appendChild(button);
+        });
+
+        controlsContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                e.target.classList.toggle('active');
+                e.target.classList.toggle('bg-teal-500');
+                e.target.classList.toggle('text-white');
+                e.target.classList.toggle('border-teal-500');
+                
+                const activeKeys = Array.from(controlsContainer.querySelectorAll('button.active')).map(b => b.dataset.key);
+                updateMarketChart(activeKeys);
+            }
+        });
+        
+        // Activate all by default
+        controlsContainer.querySelectorAll('button').forEach(b => {
+            b.classList.add('active', 'bg-teal-500', 'text-white', 'border-teal-500');
+        });
+    }
+
+    function updateMarketChart(activeKeys) {
+        const allYears = new Set();
+        activeKeys.forEach(key => {
+            appData.marketForecasts[key].years.forEach(year => allYears.add(year));
+        });
+        const sortedYears = Array.from(allYears).sort((a, b) => a - b);
+
+        marketChart.data.labels = sortedYears;
+        marketChart.data.datasets = activeKeys.map(key => {
+            const forecast = appData.marketForecasts[key];
+            const dataPoints = sortedYears.map(year => {
+                const index = forecast.years.indexOf(year);
+                return index !== -1 ? forecast.values[index] : null;
+            });
+
+            return {
+                label: `${key} (CAGR: ${forecast.cagr}%)`,
+                data: dataPoints,
+                fill: false,
+                borderColor: forecast.borderColor,
+                backgroundColor: forecast.color,
+                tension: 0.1,
+                spanGaps: true
+            };
+        });
+        marketChart.update();
+    }
+
+    function populateEcosystem() {
+        const tabsContainer = document.getElementById('ecosystem-tabs');
+        const contentContainer = document.getElementById('ecosystem-content');
+        
+        Object.entries(appData.ecosystem).forEach(([key, value], index) => {
+            const tabButton = document.createElement('button');
+            tabButton.className = `tab-btn whitespace-nowrap border-transparent text-zinc-500 hover:text-teal-600 hover:border-teal-300 py-3 px-4 text-sm font-medium ${index === 0 ? 'active border-teal-500 text-teal-600' : ''}`;
+            tabButton.innerHTML = `<span class="mr-2">${value.icon}</span>${key}`;
+            tabButton.dataset.tab = key;
+            tabsContainer.appendChild(tabButton);
+        });
+
+        tabsContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (button) {
+                const tabKey = button.dataset.tab;
+                tabsContainer.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('active', 'border-teal-500', 'text-teal-600');
+                    b.classList.add('border-transparent', 'text-zinc-500');
+                });
+                button.classList.add('active', 'border-teal-500', 'text-teal-600');
+                button.classList.remove('border-transparent', 'text-zinc-500');
+                renderEcosystemContent(tabKey);
+            }
+        });
+
+        renderEcosystemContent(Object.keys(appData.ecosystem)[0]);
+    }
+
+    function renderEcosystemContent(key) {
+        const contentContainer = document.getElementById('ecosystem-content');
+        const data = appData.ecosystem[key];
+        let companyCards = data.companies.map(company => `
+            <div class="card company-card rounded-lg p-4 cursor-pointer" data-company='${htmlEncode(JSON.stringify(company))}' data-category='${key}'>
+                <h4 class="font-bold text-zinc-800">${company.name}</h4>
+                <p class="text-sm text-zinc-500">${company.category || company.service || company.type || company.func || company.spec}</p>
+            </div>
+        `).join('');
+
+        contentContainer.innerHTML = `
+            <div class="text-center mb-8">
+                <p class="text-zinc-600">${data.description}</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                ${companyCards}
+            </div>
+        `;
+    }
+
+    function populateApplications() {
+        const selectorContainer = document.getElementById('app-selector');
+        Object.entries(appData.applications).forEach(([key, value]) => {
+            const button = document.createElement('button');
+            button.className = 'app-selector-btn card p-4 rounded-lg flex flex-col items-center justify-center text-center space-y-2';
+            button.dataset.app = key;
+            button.innerHTML = `
+                <span class="text-3xl">${value.icon}</span>
+                <span class="font-semibold text-sm">${value.title}</span>
+            `;
+            selectorContainer.appendChild(button);
+        });
+
+        selectorContainer.addEventListener('click', e => {
+            const button = e.target.closest('button');
+            if (button) {
+                const appKey = button.dataset.app;
+                selectorContainer.querySelectorAll('button').forEach(b => b.classList.remove('ring-2', 'ring-teal-500'));
+                button.classList.add('ring-2', 'ring-teal-500');
+                renderApplicationContent(appKey);
+            }
+        });
+
+        renderApplicationContent(Object.keys(appData.applications)[0]);
+        selectorContainer.querySelector('button').classList.add('ring-2', 'ring-teal-500');
+    }
+
+    function renderApplicationContent(key) {
+        const contentContainer = document.getElementById('app-content-area');
+        const data = appData.applications[key];
+
+        const benefitsList = data.benefits.map(benefit => `
+            <div class="flex items-start">
+                <span class="text-teal-500 mr-3 mt-1">✓</span>
+                <div>
+                    <h5 class="font-semibold text-zinc-800">${benefit.name}</h5>
+                    <p class="text-sm text-zinc-600">${benefit.desc}</p>
+                </div>
+            </div>
+        `).join('');
+
+        const companyCards = data.companies.map(company => `
+            <div class="card company-card rounded-lg p-4 cursor-pointer" data-company='${htmlEncode(JSON.stringify(company))}' data-category='${data.title}'>
+                <h4 class="font-bold text-zinc-800">${company.name}</h4>
+                <p class="text-sm text-zinc-500">${company.role}</p>
+            </div>
+        `).join('');
+
+        contentContainer.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2">
+                    <h3 class="text-2xl font-bold text-zinc-900">${data.title}</h3>
+                    <p class="mt-4 text-zinc-600">${data.summary}</p>
+                    <div class="mt-6 space-y-4">
+                        ${benefitsList}
+                    </div>
+                </div>
+                <div class="lg:col-span-3">
+                     <h4 class="font-semibold text-zinc-800 mb-4">Key Players & Platforms</h4>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${companyCards}
+                     </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function populateStartups() {
+        const startupContentContainer = document.getElementById('startup-content');
+        let allStartupCards = '';
+
+        for (const sectorKey in appData.startups) {
+            const sector = appData.startups[sectorKey];
+            let startupExamplesHtml = sector.examples.map(startup => `
+                <li>
+                    <a href="${startup.website}" target="_blank" class="text-teal-600 hover:underline flex items-center">
+                        <span class="mr-2">🔗</span> ${startup.name}
+                    </a>
+                    <p class="text-xs text-zinc-500">${startup.desc}</p>
+                </li>
+            `).join('');
+
+            allStartupCards += `
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-bold text-xl text-zinc-900 mb-3">${sectorKey}</h3>
+                    <p class="text-zinc-600 text-sm">${sector.description}</p>
+                    <ul class="list-disc list-inside mt-4 text-sm text-zinc-700 space-y-1">
+                        ${startupExamplesHtml}
+                    </ul>
+                </div>
+            `;
+        }
+        startupContentContainer.innerHTML = allStartupCards;
+    }
+
+    function populateOutlook() {
+        const challengesContainer = document.getElementById('challenges-content');
+        const opportunitiesContainer = document.getElementById('opportunities-content');
+        
+        const challengesHTML = `
+            <h3 class="text-xl font-bold text-rose-800 mb-4 flex items-center"><span class="mr-2">⚠️</span> Challenges</h3>
+            <ul class="space-y-3">
+                ${appData.outlook.challenges.map(c => `
+                    <li class="text-sm">
+                        <strong class="font-semibold text-zinc-700">${c.name}:</strong>
+                        <span class="text-zinc-600">${c.desc}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+
+        const opportunitiesHTML = `
+            <h3 class="text-xl font-bold text-teal-800 mb-4 flex items-center"><span class="mr-2">🚀</span> Opportunities</h3>
+            <ul class="space-y-3">
+                ${appData.outlook.opportunities.map(o => `
+                    <li class="text-sm">
+                        <strong class="font-semibold text-zinc-700">${o.name}:</strong>
+                        <span class="text-zinc-600">${o.desc}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+        
+        challengesContainer.innerHTML = challengesHTML;
+        opportunitiesContainer.innerHTML = opportunitiesHTML;
+    }
+    
+    function setupModal() {
+        const modal = document.getElementById('company-modal');
+        const closeBtn = document.getElementById('modal-close-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const modalCategory = document.getElementById('modal-category');
+        const modalBody = document.getElementById('modal-body');
+        const modalLinks = document.getElementById('modal-links'); // New element for links
+
+        document.body.addEventListener('click', e => {
+            const card = e.target.closest('.company-card');
+            if (card) {
+                const companyData = JSON.parse(card.dataset.company);
+                const category = card.dataset.category;
+                
+                modalTitle.textContent = companyData.name;
+                modalCategory.textContent = category;
+                
+                let bodyHTML = '';
+                // Add Headquarters
+                if (companyData.headquarters) {
+                    bodyHTML += `<p><strong class="font-semibold text-zinc-700">Headquarters:</strong> ${companyData.headquarters}</p>`;
+                }
+                // Add CEO
+                if (companyData.ceo && companyData.ceo.name) {
+                    bodyHTML += `<p><strong class="font-semibold text-zinc-700">CEO:</strong> `;
+                    if (companyData.ceo.bioLink) {
+                        bodyHTML += `<a href="${companyData.ceo.bioLink}" target="_blank" class="text-teal-600 hover:underline">${companyData.ceo.name}</a>`;
+                    } else {
+                        bodyHTML += companyData.ceo.name;
+                    }
+                    bodyHTML += `</p>`;
+                }
+
+                for (const [key, value] of Object.entries(companyData)) {
+                    // Exclude 'recentNews' from the general loop
+                    if (key !== 'name' && key !== 'website' && key !== 'stockSymbol' && key !== 'headquarters' && key !== 'ceo' && key !== 'recentNews') { 
+                        bodyHTML += `<p><strong class="font-semibold text-zinc-700 capitalize">${key.replace(/([A-Z])/g, ' $1')}:</strong> ${value}</p>`;
+                    }
+                }
+                modalBody.innerHTML = bodyHTML;
+
+                let linksHTML = '';
+                if (companyData.website) {
+                    linksHTML += `<a href="${companyData.website}" target="_blank" class="text-teal-600 hover:underline flex items-center"><span class="mr-2">🔗</span> Company Website</a>`;
+                }
+                if (companyData.stockSymbol) {
+                    const googleFinanceUrl = `https://www.google.com/finance/quote/${companyData.stockSymbol}:NASDAQ`; // Assuming NASDAQ for simplicity
+                    linksHTML += `<a href="${googleFinanceUrl}" target="_blank" class="text-teal-600 hover:underline flex items-center"><span class="mr-2">📈</span> View Stock on Google Finance</a>`;
+                }
+
+                // Removed Recent News section as requested.
+
+                if (companyData.website || companyData.stockSymbol) { // Update condition to exclude recentNews
+                    linksHTML += `<p class="text-xs text-zinc-500 mt-2">Note: Live stock data and comprehensive, real-time analyst reports are not available directly within this application due to API limitations and data licensing.</p>`;
+                }
+
+                modalLinks.innerHTML = linksHTML; // Populate the new links container
+
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.querySelector('.modal-content').classList.remove('scale-95');
+                modal.querySelector('.modal-content').classList.add('scale-100');
+            }
+        });
+
+        const closeModal = () => {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            modal.querySelector('.modal-content').classList.remove('scale-100');
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', e => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    createMarketChart();
+    populateEcosystem();
+    populateApplications();
+    populateStartups(); // Call the new function to populate startups
+    populateOutlook();
+    setupModal();
+});
+</script>
+
+</body>
+</html>
+
